@@ -1,0 +1,24 @@
+[package]
+name = "delphi"
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for Bitcoin block height lookups using the height oracle"
+
+[[bin]]
+name = "delphi"
+path = "src/main.rs"
+
+[dependencies]
+height-oracle = { path = "../", features = ["embedded"] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = "fat"
+opt-level = "z"
+strip = true
+overflow-checks = false
+debug-assertions = false
+
+[profile.release.package."*"]
+opt-level = "z"

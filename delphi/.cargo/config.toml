@@ -1,0 +1,5 @@
+[build]
+rustflags = ["-C", "force-unwind-tables=no", "-C", "panic=abort"]
+
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-args=-dead_strip"]
