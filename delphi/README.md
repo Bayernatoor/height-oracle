@@ -5,11 +5,10 @@ A lightning-fast command-line tool for Bitcoin block height lookups using perfec
 ## Features
 
 - **Ultra-fast lookups**: 2.5M+ lookups per second
-- **Pre-BIP34 coverage**: Complete coverage of blocks 0-227,930
+- **Pre-BIP34 coverage**: Complete coverage of v1 blocks 0-227,930
 - **Self-contained**: No external files needed - oracle data embedded in binary
-- **Ultra-lightweight**: Only 1.1MB binary (no clap, no anyhow dependencies)
+- **Ultra-lightweight**: Only 860 KiB self-contained binary
 - **Simple CLI**: Manual argument parsing for minimal overhead
-- **Verbose mode**: Detailed information and performance metrics
 
 ## Installation
 
@@ -26,42 +25,22 @@ cargo build --release
 # Simple height lookup
 ./target/release/delphi 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 # Output: 0
+./target/release/delphi 00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee
+# Output: 170
 
-# Verbose output (shows embedded data info)
-./target/release/delphi 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f --verbose
-```
-
-### Examples
-
-```bash
-# Genesis block
-./target/release/delphi 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
-# Output: 0
-
-# Block 1
-./target/release/delphi 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048
-# Output: 1
-
-# Block 100 (with verbose output)
-./target/release/delphi 000000007bc154e0fa7ea32218a72fe2c1bb9f86cf8c9ebf9a715ed27fdb229a --verbose
+# ⚠️ Warning: Non v1-blocks are not in the perfect hasmap and guessing their height WILL BE WRONG! 
+./target/release/delphi 000000000000000002cce816c0ab2c5c269cb081896b7dcb34b8422d6b74ffa1 # actual: 420,000
+# Output: 184468
 ```
 
 ### No External Files Needed
 
 The embedded version includes all oracle data in the binary itself. No need for external asset files!
 
-## Options
-
-- `BLOCK_HASH`: Bitcoin block hash in hex format (with or without 0x prefix)
-- `--verbose, -v`: Show detailed information about the lookup
-- `--help, -h`: Show help information
-
 ## Performance
 
 - **Load time**: Instant (embedded data)
-- **Lookup time**: ~400μs per lookup  
-- **Binary size**: **1.1MB** (includes all oracle data) 
-- **Stripped size**: **1.0MB** (without debug symbols)
+- **Lookup time**: ~400μs per lookup
 - **Memory usage**: Self-contained in binary
 
 ## Prerequisites
@@ -69,10 +48,7 @@ The embedded version includes all oracle data in the binary itself. No need for 
 The oracle data is embedded directly in the binary. Build requirements:
 
 ```bash
-# First, generate the oracle assets (needed for embedding)
-cd ..
-cargo run --features generate --release
-
+# First, generate the oracle assets (see parent ../README.md)
 # Then build the embedded version
 cd delphi
 cargo build --release
