@@ -116,10 +116,8 @@ impl HeightOracle {
 
         // Building perfect hash function
         // Build the perfect hash function
-        let hash_to_index = ptr_hash::DefaultPtrHash::new(
-            &block_hashes,
-            ptr_hash::PtrHashParams::default(),
-        );
+        let hash_to_index =
+            ptr_hash::DefaultPtrHash::new(&block_hashes, ptr_hash::PtrHashParams::default());
 
         // Create mapping from perfect hash index to height
         let mut height_map = vec![0u32; block_hashes.len()];
@@ -152,6 +150,11 @@ impl HeightOracle {
 
             // Skip empty lines
             if line.is_empty() {
+                continue;
+            }
+
+            // New: if the line is a placeholder 'x' (we may mark version-2 blocks with 'x'), skip it
+            if line == "x" {
                 continue;
             }
 
@@ -260,28 +263,6 @@ impl HeightOracle {
             .with_context(|| format!("Failed to open metadata file: {}", meta_path.display()))?;
         let height_data = HeightData::deserialize_from_reader(std::io::BufReader::new(meta_file))
             .context("Failed to deserialize metadata")?;
-
-        Ok(HeightOracleLoaded {
-            phash: hash_to_index,
-            heights: height_data.into_heights(),
-        })
-    }
-
-    /// Load the oracle from embedded data (when "embedded" feature is enabled)
-    pub fn load_embedded() -> Result<HeightOracleLoaded> {
-        // Loading embedded oracle data
-
-        // Include the oracle files at compile time
-        const PTRHASH_DATA: &[u8] = include_bytes!("../assets/phash.ptrh.dat");
-        const META_DATA: &[u8] = include_bytes!("../assets/heights.u18packed.dat");
-
-        // Load PtrHash from embedded data
-        let hash_to_index = PtrHashType::deserialize_full(&mut std::io::Cursor::new(PTRHASH_DATA))
-            .context("Failed to deserialize embedded PtrHash")?;
-
-        // Load metadata using 18-bit packed heights
-        let height_data = HeightData::deserialize_from_reader(std::io::Cursor::new(META_DATA))
-            .context("Failed to deserialize embedded metadata")?;
 
         Ok(HeightOracleLoaded {
             phash: hash_to_index,
