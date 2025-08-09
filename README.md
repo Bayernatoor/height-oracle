@@ -89,6 +89,6 @@ Important: the boundary of **227,931** (exclusive) is sourced from Bitcoin Core'
 ## 👥 Hackathon Team
 
 - [@ubbabeck](https://github.com/ubbabeck)
-- [@bayernator](https://github.com/bayernator)  
+- [@bayernatoor](https://github.com/bayernatoor)  
 - [@FelixWeis](https://github.com/FelixWeis)
 - Claude (AI Assistant) - Code architecture, optimization, and implementation
